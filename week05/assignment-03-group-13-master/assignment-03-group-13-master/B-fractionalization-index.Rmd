@@ -1,0 +1,40 @@
+# Part B. Computing a language fractionalization index
+
+Load all packages here:
+
+```{r}
+
+```
+
+1. Read the `part_a_country_language_distribution.csv` file into R which you created with the counts of tweets per language and country. Use this dataset to compute an index of language fractionalization at the country level using the formula in Equation (1) in the paper ``Fractionalization'' by Alesina et al (2003). Feel free to do this in the way you prefer, either using the tidyverse, or with loops and your own or base-R functions. (5 points)
+
+```{r}
+
+```
+
+2. Compute some descriptive statistics on this data, either through tables or graphs. Which countries have the highest and lowest levels of language fractionalization? (5 points)
+
+```{r}
+
+```
+
+3. Read the .csv file `fractionalization_alesina_et_al.csv` into R. Then, merge this data frame with the country-level fractionalization index you computed using Twitter data. This may be somewhat painful due to the different spellings of the countries. You can e.g. use the `countrycode` package to obtain corresponding country codes for the Alesina et al. data, or manually fix some of the country names so that they are the same across datasets. Throughout this process, check the sample size of the initial and final files to make sure you didn't drop any relevant countries. (5 points)
+
+```{r}
+
+```
+
+
+4. Compare your new metric with the measure on fractionalization from Alesina et al. What is the correlation between the two? For which main sets of countries do you find differences and similarities? Can you conjecture why? Use any statistical or graphical methods you consider appropriate to answer this question. (10 points)
+
+
+```{r}
+
+```
+
+In the end, save your merged file under the name `part_b_fractionalization_output.csv`. It should contain the following columns: `country_code`, `country_name`, `tweets_collected`, `language_fractionalization_index_tweets`, `language_fractionalization_index_alesina_et_al.`
+
+```{r}
+
+```
+

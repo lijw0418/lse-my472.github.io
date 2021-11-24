@@ -1,0 +1,36 @@
+# Part C. Querying the World Bank API
+
+Load all packages here:
+
+```{r}
+
+```
+
+1. The goal of this part of the assignment is to obtain country-level development indicators that may be related to linguistic fragmentation from the World Bank API. You can read the documentation and instructions [here](https://datahelpdesk.worldbank.org/knowledgebase/articles/898581-basic-api-call-structures).
+
+Write your own function that will take an indicator code (e.g. `SP.POP.TOTL`) as input, query the API, parse the JSON output into R, and then return a clean data frame where each row is a country.Feel free to take a look at the code for some clues on how to query the API (see e.g. [here](https://github.com/vincentarelbundock/WDI/blob/master/R/WDI.R)). (15 points)
+
+Note: If you are not able to figure this exercise out, you can use the `WDI` package in order to be able to continue with the subsequent exercises.
+
+```{r} 
+
+```
+
+2. Using the function you just created, get country-level data on two metrics: GDP per capita and another metric that you consider could be correlated with language fractionalization (see the Alesina et al paper for inspiration). (5 points)
+
+```{r}
+
+```
+
+3. Merge this new country-level dataset with the dataset `part_b_fractionalization_output.csv` that you created at the end of part B. As before, you may need to fix some of the country names to ensure that all countries can be merged. (10 points)
+
+```{r}
+
+```
+
+4. What can you learn about the relationship between language fractionalization and economic development from this new dataset? Can you replicate some of the findings in Tables 5 and 8 of the paper? With the index from the paper? With your Twitter index? Use any statistical or graphical analyses that you consider appropriate to answer this question. A word of caution when interpreting these results:  We can form hypotheses based on such findings, but only from the fact that two or more variables co-move/correlate, we cannot say whether they cause each other to move or not [link](https://en.wikipedia.org/wiki/Correlation_does_not_imply_causation). (10 points)
+
+```{r}
+
+```
+

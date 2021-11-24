@@ -1,0 +1,135 @@
+# Part A. Collecting geolocated Twitter data
+
+Load all packages here:
+
+```{r}
+#install.packages("geometry")
+library("rtweet")
+library("tidyverse")
+library("maps")
+library("stringr")
+library("jsonlite")
+library("ggplot2")
+library("geometry")
+```
+
+1. Collect a sample of geolocated tweets using your token. The geographic bounding box can span the entire globe or -- probably better for the exercise -- just focus on a given continent (e.g. Europe or Africa). Use the `stream_tweets` function from the `rtweet` package which we also discuss in the lab. If you e.g. use it in its form `stream_tweets(q = c(yourgeocoordinates), timeout = veryhighnumberofseconds, parse = FALSE, file_name = "yourfilename.json")`, you can let it run for some hours and it will continuously write the tweets into the JSON file name you specified. This way you can collect a sufficiently large sample, e.g. 100,000 or 200,000, of geolocated tweets. Note that because of the parse = FALSE option, the function does not return parsed data as an object in R, but just writes it into a file. Should the code break, you can restart it e.g. with another file and eventually merge all files with tweets (when combining different files with tweets, be sure to delete duplicates based on e.g. the tweet ids as the Stream API can return the same tweets in different tries). To avoid this cell with the `stream_tweets` function to run again afterwards (e.g. when knitting the file), you can either use the cache option in the chunk, as shown below, to make sure it only re-runs after you change the code, or simply comment out the code after you have downloaded all tweets and saved the file. __Please do not upload the large .json file with the tweets to GitHub!__ Rather store it somewhere on your computer. (10 points)
+
+```{r, cache=TRUE}
+twitter_token <- create_token(app = "twitter0214", 
+                              consumer_key = "YOdVmpAhz5rBFnEgMbSjBNJ6P",
+                              consumer_secret = "QsUuni1GJ7FI65ETOktfCv82CfBMpEF1udRypM8Xr7PEIq5DbZ",
+                              access_token = "1443306889907945474-EfS8uTz7IesDNgATwgjVkF3ZY7BcgF",
+                              access_secret = "m4FD52TBQeIohPDY5PU2WHApNAGqOYALW7Ptwf5K0i2wd")
+stream_tweets(q = c(-10, 36, 66, 72), timeout = 100, parse = FALSE, file_name = "geotweets.json")
+```
+
+2. Read/parse the JSON data into R with the `rtweet` functionalities. Should you encounter issues parsing some JSON files, you can also use/source [this]("https://gist.githubusercontent.com/JBGruber/dee4c44e7d38d537426f57ba1e4f84ab/raw/ce28d3e8115f9272db867158794bc710e8e28ee5/recover_stream.R") function. Then e.g. use the `lat_lng` function to add columns for latitude and longitude. You can delete columns that you do not need here, eventually you should have a dataframe with columns that contain the tweet id, latitude, longitude, tweet text, language, country, and country code. How many tweets did you collect? Which are the most popular hashtags? This step may take some time as well, feel free to use the cache function below to make sure you are not re-reading the file every time you compile. (7 points)
+
+```{r, cache=TRUE}
+geotweets_parse<- parse_stream("geotweets.json")
+
+geotweets_parse <- lat_lng(geotweets_parse)%>%
+                   select(c(status_id,lat,lng, text,lang,country,country_code))
+view(geotweets_parse)
+head(geotweets_parse)
+ht <- str_extract_all(geotweets_parse$text, "#[A-Za-z0-9_]+")
+ht <- unlist(ht)
+head(sort(table(ht), decreasing = TRUE))
+
+```
+
+3. Now examine the language data. Which are the most popular languages? How many unique languages did you find? Can you determine which language code corresponds to tweets whose languages could not be predicted? (5 points)
+
+```{r}
+#?Can you determine which language code corresponds to tweets whose languages could not be predicted?
+language <- str_extract_all(geotweets_parse$lang,"[A-Za-z0-9_]+")
+language <- unlist(language)
+sort(table(language), decreasing = TRUE)
+
+```
+
+4. Produce a map of the region of the world where you collected the data that also displays the language distribution by country. For this you can build on the map plot from the lab on the Streaming API. Further information can be found in the [ggplot2 documentation](https://ggplot2.tidyverse.org/). The map could take different forms - think which one could be best at conveying the relevant information. You can check Pablo Barbera's [Twitter profile](https://twitter.com/p_barbera) for a clue! (10 points)
+
+```{r}
+map.data <- map_data("world")
+#view(map.data)
+
+# ggplot(map.data)+
+#   geom_sf(aes(fill=region),show.legend = FALSE)+
+#   cale_x_continuous(limits=c(-10, 66)) + scale_y_continuous(limits = c(36, 72)) 
+
+
+
+ ggplot(map.data) +
+  geom_map(aes(map_id = region,color="blue"), map = map.data,size = 0.3) +
+  expand_limits(x = map.data$long, y = map.data$lat) +
+  scale_x_continuous(limits=c(-10, 66)) + scale_y_continuous(limits = c(36, 72)) +
+  geom_point(data = geotweets_parse, aes(x = lng, y = lat,  alpha = 2/5, color = lang) )+
+    theme(axis.line = element_blank(),
+    	axis.text = element_blank(),
+    	axis.ticks = element_blank(),
+        axis.title = element_blank(),
+        panel.background = element_blank(),
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.background = element_blank())
+```
+
+5. Which countries produced the most and the least tweets? Then, create a data frame with only four variables: `country`, `country_code`, `language`, and `n_tweets`, i.e. the number of tweets for each combination of country and language. To make it smaller, you can keep only the rows for which `n_tweets` is greater than 0! Save this data frame into a file called `part_a_country_language_distribution.csv` -- we will work with it in part B.  (3 points)
+
+```{r}
+                   
+country_most <- geotweets_parse %>%
+                  group_by(country) %>% 
+                    select(country) %>% 
+                    drop_na() %>% 
+                    summarise(observations = n())%>%
+                    filter(observations == max(observations)) 
+country_least <- geotweets_parse %>%
+                  group_by(country) %>% 
+                    select(country) %>% 
+                    drop_na() %>% 
+                    summarise(observations = n())%>%
+                    filter(observations == min(observations)) 
+ print(country_most)  
+ print(country_least)  
+ 
+ 
+countryname <- geotweets_parse%>%
+               select(country)%>%
+               unique()
+langname <- geotweets_parse%>%
+               select(lang)%>%
+               unique()
+
+countryname_mat <- as.matrix(countryname)
+langname_mat <- as.matrix(langname)
+
+i<-0
+for(c in countryname_mat){
+  for (l in langname_mat) {
+                 counttb <- geotweets_parse %>%
+                   filter(country==c &lang==l) %>%
+                   summarise(country==country,lang==lang,n_tweets = n())
+
+                   a <- geotweets_parse%>%
+                              filter(country==c&lang==l) %>%
+                              mutate(n_tweets = (counttb$n_tweets))%>%
+                              select(country,country_code,lang,n_tweets)
+     if(i==0){              
+         part_a_country_language_distribution<-a
+     } else{
+    part_a_country_language_distribution<-rbind(part_a_country_language_distribution,a)%>%
+                                          unique()
+     }
+    i<- i+1           
+ }
+}
+part_a_country_language_distribution%>%
+                            filter(n_tweets>0)
+print(part_a_country_language_distribution)
+save_as_csv(part_a_country_language_distribution,"part_a_country_language_distribution.csv")
+```
+

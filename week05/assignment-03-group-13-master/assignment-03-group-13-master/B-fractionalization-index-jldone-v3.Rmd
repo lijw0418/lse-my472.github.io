@@ -1,0 +1,214 @@
+# Part B. Computing a language fractionalization index
+
+Load all packages here:
+
+```{r}
+# install.packages("countrycode")
+# install.packages("readxl")
+# install.packages("writexl")
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(countrycode)
+library(readxl)
+library(writexl)
+```
+
+1. Read the `part_a_country_language_distribution.csv` file into R which you created with the counts of tweets per language and country. Use this dataset to compute an index of language fractionalization at the country level using the formula in Equation (1) in the paper ``Fractionalization'' by Alesina et al (2003). Feel free to do this in the way you prefer, either using the tidyverse, or with loops and your own or base-R functions. (5 points)
+
+```{r}
+######## Data cleaning ########
+
+## (1) Try to read the original .csv file
+language <- read.csv("part_a_country_language_distribution.csv")
+# language <- read.csv("part_a_country_language_distribution.csv", stringsAsFactors=F)
+# language <- read.csv("part_a_country_language_distribution.csv", stringsAsFactors=F, fileEncoding="UTF-8")
+
+## (2) Save the _v2.csv file with encoding UTF-8 and try again
+#language <- read.csv("part_a_country_language_distribution_v2.csv")
+# language <- read.csv("part_a_country_language_distribution_v2.csv", stringsAsFactors=F)
+# language <- read.csv("part_a_country_language_distribution_v2.csv", stringsAsFactors=F, fileEncoding="UTF-8")
+
+## (3) Save the data as _v3.xlsx file and try again
+# language <- read_excel("E:/MY472 Data for Data Scientist/assignment-03-group-13/part_a_country_language_distribution_v3.xlsx")
+View(language)
+
+## As there still exist some gibberish and empty values in the "country" column, 
+## I am going to replace it with a new column of country name based on country code,
+## and correct the only one ambiguous matching (missing value): Kosovo - XK
+language$country <- countrycode(language$country_code, origin = "iso2c", destination = "country.name")
+language$country[which(language$country_code == "XK")] <- "Kosovo"
+# language[which(is.na(language$country_code)), "country"] <- "Kosovo"
+View(language)
+
+## save the new data version
+write.csv(language,"E:/MY472 Data for Data Scientist/assignment-03-group-13/part_a_country_language_distribution_new.csv")
+
+######## Data Analysis ########
+
+# Read the cleaned .csv data file and remove ambiguous sequence,
+# First, calculate the total number of tweets by country,
+# Second, calculate the share of each language in every corresponding country,
+# Third, calculate the language fractionalization index of each country,
+# Finally, duplicates drop in terms of country and the country-level index, and save data.
+
+language <- read.csv("E:/MY472 Data for Data Scientist/assignment-03-group-13/part_a_country_language_distribution_new.csv")
+language <- subset(language, select = -c(X))
+head(language)
+View(language)
+
+language_fract <- language %>%
+  group_by(country_code) %>%
+  mutate(total_tweets = sum(n_tweets),
+         fract = 1 - sum((n_tweets/total_tweets)^2)) %>%
+  select(country, country_code, total_tweets, fract) %>%
+  distinct() 
+
+head(language_fract)
+View(language_fract)
+
+write.csv(language_fract, "E:/MY472 Data for Data Scientist/assignment-03-group-13/language_fract.csv")
+
+```
+
+2. Compute some descriptive statistics on this data, either through tables or graphs. Which countries have the highest and lowest levels of language fractionalization? (5 points)
+
+_Answer: There are 40 unique countries and 37 types of unique languages in total in the dataset._
+_Germany has the highest level of language fractionalization,_
+_while Luxembourg, Azerbaijan, Latvia, Malta, Kosovo, Tunisia, Austria, Georgia, Vatican City and Algeria have the lowest._
+```{r}
+# Note: I basically use country code as category, which is more standardized than country names.
+
+# Section 1. Basic descriptive statistics of the raw data
+# count the unique number of countries (by countrycode), types of language
+# and total number of tweets, of each country, and of each language in each country.
+length(unique(language$country_code))
+length(unique(language$lang))
+summarise(language, sum(n_tweets))
+summarise(group_by(language, country_code), sum(n_tweets))
+summarise(group_by(language, country_code, lang), sum(n_tweets))
+
+# Section 2. Countries that have the highest and lowest levels of language fractionalization
+# count the range of language fractionalization,
+# locate the country at the highest and lowest respectively.
+max(language_fract$fract, na.rm = TRUE)
+language_fract[which.max(language_fract$fract), c("country","country_code")]
+min(language_fract$fract, na.rm = TRUE)
+language_fract[which.min(language_fract$fract), c("country","country_code")]
+# double check the result by another approach of filtering data.
+language_fract_range <- language_fract %>%
+  select(country, country_code, fract) %>%
+  distinct()%>%
+  arrange(desc(fract)) %>%
+  filter(fract == max(fract, na.rm = TRUE)) %>%
+  filter(fract == min(fract, na.rm = TRUE))
+head(language_fract_range)
+View(language_fract_range)
+  
+# Section 3. Visualize the language fractionalization in a bar chart.
+figure <- ggplot(language_fract_range, aes(x=country_code, y=fract, label=country)) +
+  geom_bar(stat="identity", width=0.8) + geom_text(hjust=-.1, size=3) + theme_minimal()
+
+figure
+```
+
+3. Read the .csv file `fractionalization_alesina_et_al.csv` into R. Then, merge this data frame with the country-level fractionalization index you computed using Twitter data. This may be somewhat painful due to the different spellings of the countries. You can e.g. use the `countrycode` package to obtain corresponding country codes for the Alesina et al. data, or manually fix some of the country names so that they are the same across datasets. Throughout this process, check the sample size of the initial and final files to make sure you didn't drop any relevant countries. (5 points)
+
+```{r}
+# Read the .csv file
+alesina <- read.csv("fractionalization_alesina_et_al.csv")
+View(alesina)
+
+# Correct the column name and standardize a few country names
+colnames(alesina)[1] <- "country"
+levels(factor(alesina$country))
+alesina$country[which(alesina$country == "Congo, Dem. Rep. (Zaire)")] <- "Congo, Democratic Republic of the"
+alesina$country[which(alesina$country == "Macedonia (Former Yug. Rep)")] <- "Macedonia"
+alesina$country[which(alesina$country == "Myanmar (Burma)")] <- "Myanmar"
+alesina$country[which(alesina$country == "Macedonia (Former Yug. Rep)")] <- "Serbia"
+alesina$country[which(alesina$country == "St Kitts & Nevis")] <- "Saint Kitts and Nevis"
+alesina$country[which(alesina$country == "Yugoslavia (pre 1991)")] <- "Yugoslavia"
+levels(factor(alesina$country))
+
+# Generate the corresponding country code
+alesina$country_code <- countrycode(alesina$country, origin = "country.name", destination = "iso2c")
+
+# Fix the ambiguous matching in the warning message
+alesina$country_code[which(alesina$country == "Micronesia")] <- "FM"
+alesina$country_code[which(alesina$country == "Netherlands Antilles")] <- "AN"
+alesina$country_code[which(alesina$country == "Serbia/Montenegro (Yugoslavia)")] <- "RS"
+alesina$country_code[which(alesina$country == "Yugoslavia")] <- "YU"
+View(alesina)
+
+# Merge data: to keep all the observations,
+# I merge the smaller dataset (language_fract) into the bigger one (alesina)
+language_merged <- alesina %>%
+  left_join(language_fract, by = "country_code")
+
+# Correct column names
+colnames(language_merged)[1] <- "country"
+language_merged <- subset(language_merged, select = -c(country.y))
+head(language_merged)
+View(language_merged)
+
+```
+
+
+4. Compare your new metric with the measure on fractionalization from Alesina et al. What is the correlation between the two? For which main sets of countries do you find differences and similarities? Can you conjecture why? Use any statistical or graphical methods you consider appropriate to answer this question. (10 points)
+
+_Answer: by running an OLS regression based on the sample with non-missing values,_
+_we may find the correlation coefficient is slightly negative but not statistically significant, which indicates difference as dominant effect in the whole._
+_If we look at the plot graphs, countries in north and east Europe, such as Switzerland and Russia,  may have higher similarities._
+```{r}
+# Order and rename columns (finally save)
+language_merged <- language_merged[, c(3,1,4,5,2)]
+colnames(language_merged) <- c("country_code", "country_name", "tweets_collected", "language_fractionalization_index_tweets", "language_fractionalization_index_alesina_et_al" )
+head(language_merged)
+View(language_merged)
+
+# Keep observations of non-missing fictionalization values in both datasets
+language_merged$language_fractionalization_index_alesina_et_al <- as.numeric(language_merged$language_fractionalization_index_alesina_et_al)
+language_merged_full <- language_merged[!is.na(language_merged$language_fractionalization_index_alesina_et_al),]
+language_merged_full <- language_merged_full[!is.na(language_merged_full$language_fractionalization_index_tweets),]
+head(language_merged_full)
+View(language_merged_full)
+length(unique(language_merged_full$country_code))
+
+# Plot the correlation between both indexs 
+corr_plot <- ggplot(language_merged_full, aes(x=language_fractionalization_index_alesina_et_al, y=language_fractionalization_index_tweets, label=country_code)) +
+  geom_point() + geom_text(hjust=-.1, size=3) + 
+  geom_smooth() +
+  theme_minimal()
+
+corr_plot
+
+# Estimate the correlation coefficient using a linear regression
+summary(lm(language_fractionalization_index_alesina_et_al ~ language_fractionalization_index_tweets, data = language_merged_full))
+
+# Plot the correlation between both indexes, after taking the log value
+language_merged_full_log <- language_merged_full %>%
+  mutate(language_fractionalization_index_alesina_et_al_log = log(1+language_fractionalization_index_alesina_et_al),
+         language_fractionalization_index_tweets_log = log(1+language_fractionalization_index_tweets))
+head(language_merged_full_log)
+View(language_merged_full_log)
+corr_line_plot <- ggplot(language_merged_full_log, aes(x=language_fractionalization_index_alesina_et_al_log, y=language_fractionalization_index_tweets_log, label=country_name)) +
+  geom_point() + geom_text(hjust=-.1, size=3) +
+	scale_x_log10("log(language_fractionalization_index_alesina_et_al)") + 
+  scale_y_log10("log(language_fractionalization_index_tweets)", labels=scales::comma) +
+  geom_smooth() +
+  theme_minimal()
+
+corr_line_plot
+
+# Estimate the correlation coefficient between log-transformed values using a linear regression
+summary(lm(language_fractionalization_index_alesina_et_al_log ~ language_fractionalization_index_tweets_log, data = language_merged_full_log))
+```
+
+In the end, save your merged file under the name `part_b_fractionalization_output.csv`. It should contain the following columns: `country_code`, `country_name`, `tweets_collected`, `language_fractionalization_index_tweets`, `language_fractionalization_index_alesina_et_al.`
+
+```{r}
+# Save the merged data
+write.csv(language_merged, 'E:/MY472 Data for Data Scientist/assignment-03-group-13/part_b_fractionalization_output.csv')
+
+```
+

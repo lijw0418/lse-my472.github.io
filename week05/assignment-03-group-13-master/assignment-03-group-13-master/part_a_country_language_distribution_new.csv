@@ -1,0 +1,170 @@
+"","country","country_code","lang","n_tweets"
+"1","Luxembourg","LU","fr",1
+"2","Denmark","DK","und",5
+"3","Denmark","DK","pl",1
+"4","Italy","IT","und",9
+"5","Italy","IT","it",26
+"6","Italy","IT","tr",1
+"7","Italy","IT","es",2
+"8","Germany","DE","fr",1
+"9","Germany","DE","und",7
+"10","Germany","DE","de",13
+"11","Germany","DE","en",6
+"12","Germany","DE","cs",1
+"13","Germany","DE","tl",1
+"14","Germany","DE","pl",1
+"15","Germany","DE","lt",1
+"16","France","FR","fr",43
+"17","France","FR","und",9
+"18","France","FR","en",3
+"19","France","FR","tr",1
+"20","France","FR","es",3
+"21","France","FR","eu",1
+"22","France","FR","cs",2
+"23","France","FR","in",1
+"24","France","FR","ro",1
+"25","France","FR","ta",1
+"26","Germany","DE","und",1
+"27","Germany","DE","de",3
+"28","Germany","DE","en",3
+"29","Germany","DE","tr",1
+"30","Germany","DE","fa",1
+"31","Germany","DE","sl",1
+"32","United Kingdom","GB","und",22
+"33","United Kingdom","GB","en",190
+"34","United Kingdom","GB","tr",1
+"35","United Kingdom","GB","pt",1
+"36","United Kingdom","GB","fa",2
+"37","United Kingdom","GB","ht",1
+"38","United Kingdom","GB","cs",1
+"39","United Kingdom","GB","in",1
+"40","United Kingdom","GB","ar",3
+"41","United Kingdom","GB","ur",1
+"42","United Kingdom","GB","cy",1
+"43","Turkey","TR","und",24
+"44","Turkey","TR","en",4
+"45","Turkey","TR","tr",107
+"46","Turkey","TR","pt",1
+"47","Turkey","TR","sl",1
+"48","Turkey","TR","in",2
+"49","Turkey","TR","tl",2
+"50","Turkey","TR","is",1
+"51","Spain","ES","und",9
+"52","Spain","ES","en",1
+"53","Spain","ES","es",52
+"54","Spain","ES","pt",2
+"55","Spain","ES","ru",1
+"56","Spain","ES","tl",1
+"57","Spain","ES","ca",4
+"58","Netherlands","NL","und",3
+"59","Netherlands","NL","en",4
+"60","Netherlands","NL","tr",1
+"61","Netherlands","NL","nl",12
+"62","North Macedonia","MK","und",1
+"63","North Macedonia","MK","sr",1
+"64","Ireland","IE","und",4
+"65","Ireland","IE","en",10
+"66","Ireland","IE","tl",1
+"67","Iran","IR","en",1
+"68","Iran","IR","fa",2
+"69","Iran","IR","ar",2
+"70","Czechia","CZ","de",1
+"71","Czechia","CZ","cs",4
+"72","Norway","NO","en",1
+"73","Norway","NO","tr",1
+"74","Norway","NO","no",2
+"75","Netherlands","NL","es",1
+"76","Netherlands","NL","nl",3
+"77","Netherlands","NL","pt",1
+"78","Montenegro","ME","sr",1
+"79","Belgium","BE","fr",1
+"80","Belgium","BE","und",1
+"81","Belgium","BE","en",2
+"82","Finland","FI","fi",2
+"83","Ukraine","UA","und",1
+"84","Ukraine","UA","en",1
+"85","Ukraine","UA","uk",1
+"86","Greece","GR","und",2
+"87","Greece","GR","el",1
+"88","Bosnia & Herzegovina","BA","und",1
+"89","Bosnia & Herzegovina","BA","sl",1
+"90","Iran","IR","und",1
+"91","Iran","IR","fa",6
+"92","Norway","NO","no",1
+"93","Italy","IT","it",1
+"94","Italy","IT","en",1
+"95","Turkey","TR","und",3
+"96","Turkey","TR","it",1
+"97","Turkey","TR","en",1
+"98","Turkey","TR","tr",13
+"99","Turkey","TR","ar",1
+"100","Turkey","TR","ro",1
+"101","Croatia","HR","und",4
+"102","Croatia","HR","en",1
+"103","Azerbaijan","AZ","tr",2
+"104","Spain","ES","en",1
+"105","Spain","ES","es",1
+"106","Spain","ES","ca",1
+"107","Russia","RU","ru",8
+"108","Finland","FI","fi",1
+"109","Finland","FI","et",1
+"110","Latvia","LV","lv",1
+"111","Croatia","HR","und",1
+"112","Malta","MT","en",1
+"113","Ukraine","UA","ru",2
+"114","Sweden","SE","en",2
+"115","Sweden","SE","sv",6
+"116","Iraq","IQ","und",2
+"117","Iraq","IQ","ar",1
+"118","Sweden","SE","und",3
+"119","Sweden","SE","in",1
+"120","Sweden","SE","sv",1
+"121","Kosovo","XK","en",1
+"122","Ukraine","UA","uk",1
+"123","Portugal","PT","pt",4
+"124","Portugal","PT","zh",1
+"125","Switzerland","CH","de",1
+"126","Spain","ES","und",2
+"127","Spain","ES","en",2
+"128","Spain","ES","es",3
+"129","Spain","ES","pl",1
+"130","Serbia","RS","und",1
+"131","Serbia","RS","sr",2
+"132","Greece","GR","en",1
+"133","Greece","GR","nl",1
+"134","Poland","PL","en",2
+"135","Poland","PL","pl",4
+"136","Denmark","DK","it",1
+"137","Serbia","RS","und",1
+"138","Serbia","RS","en",2
+"139","Serbia","RS","cs",1
+"140","Serbia","RS","da",1
+"141","Tunisia","TN","und",1
+"142","Ireland","IE","pt",1
+"143","Monaco","MC","it",1
+"144","Monaco","MC","nl",1
+"145","Russia","RU","ru",2
+"146","United Kingdom","GB","en",1
+"147","Hungary","HU","en",1
+"148","Hungary","HU","hu",1
+"149","France","FR","de",1
+"150","Poland","PL","und",1
+"151","Poland","PL","pl",1
+"152","Italy","IT","pt",1
+"153","Montenegro","ME","und",1
+"154","Montenegro","ME","en",1
+"155","Slovakia","SK","und",1
+"156","Slovakia","SK","uk",1
+"157","Czechia","CZ","und",1
+"158","Czechia","CZ","cs",1
+"159","Germany","DE","pt",1
+"160","Czechia","CZ","pt",1
+"161","Belgium","BE","en",1
+"162","Switzerland","CH","tr",1
+"163","Germany","DE","it",1
+"164","Hungary","HU","en",1
+"165","Austria","AT","und",1
+"166","Georgia","GE","ru",1
+"167","Italy","IT","fr",1
+"168","Vatican City","VA","en",1
+"169","Algeria","DZ","fr",1
